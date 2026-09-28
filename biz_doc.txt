@@ -1,0 +1,314 @@
+
+School Fees Payment Platform
+Product concept, user analysis, business logic, and student identification design
+Document purpose
+This document consolidates the project information discussed so far for a SchoolPay-like web application. It defines the product concept, users, core business processes, financial rules, unique Student ID design, security boundaries, and initial MVP scope. It is a working product-analysis document and should be refined through interviews with schools, parents, payment partners, and legal/compliance advisers.
+1. Product concept
+The proposed product is a multi-tenant web application for school-fee collection and school-finance management. It enables schools to register learners, define fee structures, create student obligations, receive digitally confirmed payments through approved channels, issue receipts, calculate balances, reconcile transactions, and produce financial reports.
+The platform should focus first on the complete fees-to-receipt-to-reconciliation workflow rather than attempting to build every school ERP function in the first release.
+Student created/imported        ↓Fee structure configured        ↓Student billed        ↓Student ID used for payment        ↓Payment provider confirms transaction        ↓Payment recorded and allocated        ↓Receipt issued and balance updated        ↓Settlement and reconciliation verified
+2. Problem statement
+Schools and parents often face slow, fragmented, and error-prone fee-payment processes. Parents may rely on cash, bank queues, manual transfers, or payment slips; school finance staff may reconcile payments using paper receipts, mobile-money messages, bank statements, and spreadsheets. This creates delayed payment confirmation, incorrect student matching, lost receipts, disputes, weak collection visibility, and significant manual work.
+The platform should give each student a reliable financial record and give schools one source of truth for charges, payments, adjustments, receipts, balances, settlement, and reporting.
+3. Users and roles
+Role
+Main goal
+Typical permissions
+Platform super administrator
+Operate the platform, onboard schools, support integrations and investigate exceptions
+Platform-wide but tightly controlled access
+School owner / director
+Monitor collections, balances, trends and approvals
+School-wide reporting and high-level approvals
+School administrator
+Manage school setup, academic terms, staff and student records
+Operational administration
+Bursar / accountant
+Configure fees, bill students, reconcile payments and report
+Finance operations
+Cashier
+Record approved offline/manual collections
+Restricted finance actions
+Teacher / class teacher
+Check permitted financial-clearance status
+Limited read-only class data
+Parent / guardian
+Pay fees, view own linked child balance and receipts
+Own linked children only
+Student
+View own permitted fee status and identifier
+Restricted own data
+Auditor
+Inspect finance history and controls
+Read-only financial/audit access
+Payment partner
+Process transactions and send statuses
+API/service-account access only
+Support officer
+Resolve payment questions and create cases
+Restricted support access
+4. Role-separation rules
+A cashier must not be able to create and approve a fee waiver alone.
+A bursar or support officer must not delete a confirmed payment.
+A support officer must not directly alter balances; authorized finance workflows must create auditable adjustments.
+A teacher must not access school-wide balances or parent payment history.
+A parent must never access another parent’s child, balance, receipt, or statement.
+One school must never access another school’s data.
+Every sensitive financial action, export, approval, or manual correction must be audited.
+5. Student identification design
+Every active student must be assigned a system-generated, globally unique, permanent Student ID. This is the main public identifier used for student lookup, payment initiation, transaction matching, receipts, permitted fee-detail access, support investigations, and integrations. A separate Student Payment Number is not required; the Student ID performs that role.
+Identifier
+Purpose
+Example
+Parent-visible?
+Internal database ID
+Technical primary key used by the database
+550e8400-e29b-41d4-a716-446655440000
+No
+Student ID
+Permanent public student and payment identifier
+KFS-0000238-4
+Yes
+School registration number
+Existing school admission/registration number
+S3-2026-238
+Optional / yes
+Payment reference
+Identifies one payment attempt
+PAY-7KM29Q
+Yes
+Provider transaction ID
+Identifies one transaction at a bank/MNO/aggregator
+MOMO-927361829
+Where appropriate
+Receipt number
+Identifies one confirmed receipt
+RCT-2026-008812
+Yes
+Invoice number
+Identifies one fee obligation or bill
+INV-2026-T1-0832
+Yes
+Student ID rules
+The platform generates the Student ID automatically when a student is created or imported.
+The Student ID is globally unique across the entire platform and identifies exactly one student record.
+The Student ID remains permanently linked to historical records after transfer, graduation, withdrawal, or archiving.
+The Student ID must never be reused for another student.
+The Student ID must not embed sensitive data such as date of birth, national ID number, phone number, or full name.
+The Student ID should be short, readable, printable, and usable in web, mobile-money, bank, support, and future USSD workflows.
+The Student ID must include validation such as a check digit to catch common typing errors.
+The raw database UUID must not be used as the public Student ID.
+Recommended Student ID format
+[School Code]-[Student Sequence]-[Check Digit]Example: KFS-0000238-4KFS        = school code0000238    = student sequence4          = check digit
+The interface may display hyphens for readability while the system normalizes entries by removing spaces, hyphens, and letter-case differences before validation.
+Student creation workflow
+School staff adds or imports student        ↓System validates required details        ↓System creates internal database ID        ↓System generates Student ID and check digit        ↓System validates global uniqueness        ↓Student becomes active        ↓Student ID is available for payment and permitted access
+6. Parent payment journey
+Parent opens payment page        ↓Parent enters Student ID        ↓System validates ID format and check digit        ↓System finds the school and student        ↓System displays limited identity confirmation        ↓Parent enters amount and selects payment channel        ↓System creates a payment intent and unique payment reference        ↓Payment partner processes transaction        ↓Partner confirms success, failure, pending status or reversal        ↓System records valid confirmed payment once        ↓Payment is allocated, receipt issued, balance updated        ↓Notifications and integration events are queued
+Payment-page privacy rule
+A Student ID identifies the account; it is not a password. On a payment page, display only the minimum confirmation needed to prevent a wrong payment, such as school name, student first name with masked surname, class/programme, and possibly the balance if school policy permits. Do not show full personal details, guardian contacts, full payment history, or full statements to a person who only knows a Student ID.
+Action
+Student ID only
+Student ID + OTP
+Verified parent account
+Authorized school staff
+Confirm limited student identity
+Yes
+Yes
+Yes
+Yes
+Start a payment
+Yes
+Yes
+Yes
+Yes
+Show current balance
+Optional/limited
+Yes
+Yes
+Yes
+Download receipt
+No
+Yes
+Yes
+Yes
+View full statement/history
+No
+No
+Yes
+Yes
+Edit student record
+No
+No
+No
+Authorized only
+Adjust fees or payment allocation
+No
+No
+No
+Authorized finance only
+7. Core business entities
+Entity
+Purpose
+School
+A customer/tenant using the platform
+Campus / branch
+A school operating unit
+Academic year and term
+Period used for billing and reporting
+Class / programme
+Academic grouping for fee configuration
+Student
+Learner with permanent Student ID
+Parent / guardian
+Authorized payer and viewer of linked student information
+Fee item
+Charge such as tuition, meals, transport, uniform or examination fee
+Fee structure
+Set of fees applicable to a term, class or programme
+Invoice / fee obligation
+Amount expected from a particular student
+Payment intent
+A request to collect an amount through a selected channel
+Payment attempt
+One provider-specific attempt to collect the payment
+Confirmed payment
+Verified external financial event
+Allocation
+Application of a payment to one or more charge lines
+Ledger entry
+Immutable financial record of charge, payment, reversal or adjustment
+Receipt
+Proof of a confirmed payment
+Settlement
+Expected or actual transfer of collected funds
+Reconciliation case
+Exception requiring finance review
+Adjustment
+Authorized correction, discount, waiver or write-off
+Notification
+SMS/email/in-app message
+Audit event
+Evidence of a sensitive user or system action
+8. Financial business rules
+Billing and fee rules
+Fee structures are versioned by school, campus, academic year, term, class/programme, and effective date.
+Fee structures can include mandatory and optional items.
+Every charge must have a source: standard fee structure, supplementary charge, transport assignment, penalty, or authorized adjustment.
+Invoice totals must be calculated from their charge lines, not manually edited.
+Discounts, scholarships, waivers, and write-offs must be separate approval-controlled records with reasons and audit history.
+Fee structure changes must not silently change already-issued student charges.
+Partial payments are allowed unless a school-defined policy restricts them.
+Payment rules
+A unique payment intent and reference must be created before contacting a payment partner.
+One payment intent may have multiple attempts if a parent retries after a failure or timeout.
+Each provider transaction ID must be unique for that provider/channel.
+Callbacks and status updates must be idempotent: duplicate messages must never credit the student twice.
+Only a verified successful payment can create a credit in the financial ledger.
+Pending, failed, cancelled, and expired payments must not reduce the outstanding balance.
+Reversals must create a compensating ledger entry; the original confirmed payment must remain in history.
+Duplicate payments must be flagged and handled through configured policy: credit balance, future allocation, refund workflow, or review queue.
+A payment confirmation must be separated from settlement confirmation.
+Payment status model
+Created → Pending → Provider accepted → Succeeded                           ↘ Failed                           ↘ Expired                           ↘ CancelledSucceeded → ReversedAny state requiring review → Under investigation
+Allocation and balance rules
+A confirmed payment may be allocated to one or more unpaid charge lines. The school must configure a default allocation policy, such as oldest unpaid charge first, tuition first, parent-selected item, or a bursar-defined priority order.
+Outstanding balance =Charges + approved penalties − allocated payments − approved discounts/waivers − applicable refunds or reversals
+The system must never allocate more than the confirmed payment amount.
+The system must not reduce an invoice below zero without recording an overpayment/credit balance.
+Overpayments become unapplied credit or advance payment balances until allocated, refunded, or handled under policy.
+Reallocation of a payment requires authorization, reason capture, and full audit history.
+Receipt rules
+Issue a receipt only after the payment is confirmed and recorded in the ledger.
+Receipt numbers must be unique and never reused.
+A receipt includes the school, Student ID, payment reference, receipt number, amount, channel, relevant provider reference, date/time, and balance/allocation summary.
+Receipts are immutable. Refunds and reversals must reference the original receipt through new records.
+Failed SMS/email delivery must not invalidate a payment or receipt; notification delivery is retried separately.
+9. Reconciliation logic
+Internal confirmed-payment ledger        +Provider transaction record / bank settlement statement        ↓Reconciliation engine        ↓Matched / partially matched / unmatched / duplicate / pending settlement / reversed / disputed        ↓Finance exception queue and reports
+Every confirmed payment should be expected in a provider and/or bank settlement record.
+Reconciliation compares transaction amount, provider transaction ID, payment reference, school, channel, time window, and settlement account.
+Unmatched transactions must enter an exception queue and be assigned for review.
+Manual resolution requires a reason, actor, timestamp, and evidence where necessary.
+Manually recorded payments must always be distinguishable from provider-confirmed transactions.
+Daily reconciliation reports must show confirmed payments, expected settlement, actual settlement, reversals, duplicates, unmatched items, and unresolved cases.
+10. Approvals and audit controls
+Action
+Who may initiate
+Required control
+Create fee structure
+Bursar / authorized finance user
+Audit log
+Publish fee structure
+Bursar or director
+Optional approval by school policy
+Add supplementary charge
+Bursar / administrator
+Reason and audit log
+Grant discount or waiver
+Authorized finance staff
+Reason and approval threshold
+Write off debt
+Director / owner
+Higher-level approval and audit record
+Reallocate payment
+Bursar / accountant
+Reason and optional second approval
+Process refund
+Finance approver
+Verification, provider procedure, approval
+Reverse payment
+Provider/system or controlled finance process
+Compensating ledger entry; no deletion
+Edit historical financial data
+No direct edits
+Adjustment/reversal only
+11. Initial MVP scope
+Included
+Web-based school portal
+School onboarding and staff roles
+Student import by Excel/CSV
+System-generated Student IDs
+Academic year, term, class and stream setup
+Fee-item and fee-structure configuration
+Student charges/invoices and partial payments
+One payment-channel integration
+Payment status and callback processing
+Automatic digital receipts
+Student fee statements and parent payment lookup
+Daily collections and outstanding-balance reports
+Basic reconciliation exception queue
+Notifications by SMS/email where configured
+Audit logs for critical finance actions
+Excluded from first release
+Full school ERP, examinations, attendance, timetable, library, payroll and e-learning
+Advanced lending and wallets
+Multiple complex payment integrations at launch
+Native mobile applications
+Advanced analytics and AI features
+Multi-country payment operations
+Complex ticketing or non-school commerce workflows
+12. Non-functional requirements
+Multi-tenancy: complete data separation between schools.
+Mobile-first usability for parents and finance staff.
+Idempotent payment and callback processing.
+Role-based access control and separation of duties.
+Auditability of financial actions and exports.
+Encryption in transit and secure management of credentials/secrets.
+Reliable backups, recovery procedures, and retained financial history.
+Monitoring for payment failures, delayed callbacks, reconciliation exceptions, notification failures, and system errors.
+Performance appropriate for term-opening payment peaks.
+Privacy-by-design: collect only necessary data and expose the minimum required details.
+13. Open decisions
+The following business decisions must be confirmed before detailed user flows, data design, API design, and architecture are finalized:
+Will the system only record payments, or also initiate mobile-money payment prompts?
+Which payment channel will be integrated first: MTN MoMo, Airtel Money, bank collection, card, or an aggregator?
+Will parents pay a convenience fee, will schools pay a subscription, or will both contribute?
+Can parents pay any amount, or must they select fixed fee items and approved amounts?
+Will school staff record cash/manual payments, and what approval controls will apply?
+Will the first version include only web access or also SMS, USSD, WhatsApp, or a mobile app?
+Which charge types are in scope first: tuition only, or meals, transport, uniform, examinations, admission, and other fees?
+Does each school have one settlement account or multiple accounts by campus/fee type?
+Is the first market Uganda only or a wider East African rollout?
+14. Next deliverable
+The next analysis artifact should be User Flows and Use Cases. It should cover student onboarding, fee setup, parent lookup and payment, payment callback processing, receipt generation, balance lookup, parent verification, reconciliation, payment disputes, reversals/refunds, manual payments, financial adjustments, reporting, and role/permission administration.

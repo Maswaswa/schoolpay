@@ -1,0 +1,58 @@
+/* custom.css — app-wide polish loaded on top of style.css / landing.css.
+   Registered from public/index.php (EXTRA_CSS). Safe to empty/delete. */
+
+:root {
+  --sp-radius: 10px;
+  --sp-shadow: 0 6px 18px rgba(20, 30, 60, 0.08);
+  --sp-shadow-hover: 0 10px 26px rgba(20, 30, 60, 0.14);
+}
+
+/* ---- Global niceties ---- */
+html { scroll-behavior: smooth; }
+::selection { background: #1f5eff33; }
+
+/* ---- Buttons ---- */
+.btn {
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(20, 30, 60, 0.14); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+.btn:focus-visible { outline: 2px solid #1f5eff; outline-offset: 2px; }
+
+/* ---- Cards & panels ---- */
+.card, .panel {
+  border-radius: var(--sp-radius);
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.card:hover, .panel:hover { box-shadow: var(--sp-shadow-hover, var(--sp-shadow-hover, 0 8px 24px rgba(20,30,60,.12))); }
+
+/* ---- Tables ---- */
+table { border-collapse: collapse; }
+thead th { position: sticky; top: 0; background: #f8fafd; z-index: 1; }
+tbody tr { transition: background .12s ease; }
+tbody tr:nth-child(even) { background: #fafbfe; }
+tbody tr:hover { background: #f0f4ff; }
+
+/* ---- Flash messages ---- */
+.flash { animation: sp-flash-in .25s ease-out; border-radius: 8px; }
+@keyframes sp-flash-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { transform: none; }
+}
+
+/* ---- Sidebar polish ---- */
+.nav-link { transition: background .12s ease, padding-left .12s ease; }
+.nav-link:hover { padding-left: calc(var(--sp-nav-indent, 14px) + 3px); }
+.nav-link.active { font-weight: 600; }
+
+/* ---- Landing hero accent ---- */
+.public-body .hero, .public-body [class*="hero"] { text-rendering: optimizeLegibility; }
+
+/* ---- Print: receipts / reports only ---- */
+@media print {
+  .sidebar, .topbar, .site-header, .site-footer, .footer, .logout-form,
+  .no-print, .btn, nav { display: none !important; }
+  .main, .content { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+  body { background: #fff; }
+  table { width: 100%; font-size: 12px; }
+}

@@ -1,0 +1,109 @@
+/* ============================================================
+   Public landing area — marketing shell (no sidebar)
+   Reuses design tokens from style.css via CSS variables.
+   ============================================================ */
+
+.public-body { display: flex; flex-direction: column; min-height: 100vh; }
+.public-body .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.public-body .site-main { flex: 1; }
+
+/* ---------- Header / nav ---------- */
+.site-header { background: #101731; color: #fff; position: sticky; top: 0; z-index: 40; }
+.site-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.site-nav .brand { display: flex; align-items: center; gap: 10px; color: #fff; padding: 6px 0; }
+.site-nav .brand:hover { text-decoration: none; }
+.site-nav .brand-mark { background: var(--brand); color: #fff; font-weight: 800; border-radius: 8px; padding: 6px 9px; font-size: 14px; }
+.site-nav .brand-name { font-weight: 700; }
+.site-links { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.site-links a { color: #c9d0e8; padding: 8px 12px; border-radius: 8px; font-size: 13.5px; }
+.site-links a:hover { background: rgba(255,255,255,.08); color: #fff; text-decoration: none; }
+.site-links a.active { background: var(--brand); color: #fff; font-weight: 600; }
+
+/* ---------- Hero (home) ---------- */
+.hero { background: linear-gradient(120deg, #101731 0%, #16306b 60%, #1f5eff 140%); color: #fff; padding: 72px 0 64px; }
+.hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+.hero-kicker { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+               border-radius: 999px; padding: 5px 14px; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: #cfe0ff; margin-bottom: 16px; }
+.hero h1 { font-size: 40px; line-height: 1.15; margin: 0 0 14px; color: #fff; }
+.hero .hero-sub { font-size: 17px; color: #c9d0e8; max-width: 520px; margin: 0 0 24px; line-height: 1.6; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-panel { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18); border-radius: 14px; padding: 20px; }
+.hero-points { list-style: none; margin: 0; padding: 0; }
+.hero-points li { padding: 9px 0; border-bottom: 1px dashed rgba(255,255,255,.15); font-size: 14px; color: #e3e9ff; }
+.hero-points li:last-child { border-bottom: none; }
+.hero-points li::before { content: '✔'; color: #7ee2a8; margin-right: 10px; font-weight: 700; }
+
+/* ---------- Sections ---------- */
+.section { padding: 54px 0; }
+.section-alt { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.section-head { text-align: center; max-width: 660px; margin: 0 auto 30px; }
+.section-head h2 { font-size: 26px; margin: 0 0 8px; }
+.section-head p { color: var(--muted); margin: 0; line-height: 1.6; }
+
+/* ---------- Feature / audience cards ---------- */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.feature-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.feature-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--brand-soft); color: var(--brand-dark);
+                display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 10px; }
+.feature-card h3 { margin: 0 0 6px; font-size: 15px; }
+.feature-card p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+
+.audience-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.audience-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.audience-card h3 { margin: 10px 0 6px; font-size: 16px; }
+.audience-card p { margin: 0 0 14px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.audience-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-dark);
+                 display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+
+/* ---------- Steps (how it works) ---------- */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; counter-reset: step; }
+.step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; position: relative; }
+.step::before { counter-increment: step; content: counter(step); position: absolute; top: -14px; left: 18px;
+                background: var(--brand); color: #fff; width: 28px; height: 28px; border-radius: 50%;
+                display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+.step h3 { margin: 8px 0 6px; font-size: 14.5px; }
+.step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+/* ---------- CTA band ---------- */
+.cta-band { background: linear-gradient(120deg, #101731, #1f3a8f); border-radius: 16px; color: #fff;
+            padding: 38px 30px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-band h2 { margin: 0 0 6px; font-size: 24px; color: #fff; }
+.cta-band p { margin: 0; color: #c9d0e8; }
+
+/* ---------- Login pages ---------- */
+.login-shell { max-width: 440px; margin: 40px auto; }
+.login-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 28px;
+              box-shadow: 0 10px 40px rgba(20,30,60,.08); }
+.login-card h1 { margin: 0 0 4px; font-size: 21px; display: flex; align-items: center; gap: 12px; }
+.login-card .sub { color: var(--muted); font-size: 13.5px; margin-bottom: 18px; }
+.login-card .badge-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-dark);
+                          display: inline-flex; align-items: center; justify-content: center; font-size: 22px; }
+.login-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+.login-switch-links { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+.login-switch-links a { border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 12.5px; color: var(--muted); }
+.login-switch-links a:hover { border-color: var(--brand); color: var(--brand); text-decoration: none; }
+
+/* ---------- About page ---------- */
+.about-hero { text-align: center; padding: 56px 0 26px; }
+.about-hero h1 { font-size: 34px; margin: 0 0 12px; }
+.about-hero p { color: var(--muted); max-width: 720px; margin: 0 auto; font-size: 16px; line-height: 1.6; }
+.value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 26px; }
+.value-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.value-card h3 { margin: 0 0 8px; font-size: 15px; }
+.value-card p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: #101731; color: #9aa3c0; margin-top: auto; padding: 22px 0; font-size: 13px; }
+.site-footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.site-footer-links { display: flex; gap: 16px; }
+.site-footer-links a { color: #c9d0e8; }
+.site-footer-links a:hover { color: #fff; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero { padding: 46px 0 50px; }
+  .hero h1 { font-size: 30px; }
+  .site-footer-inner { flex-direction: column; align-items: flex-start; }
+}
